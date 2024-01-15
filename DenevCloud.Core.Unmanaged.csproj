@@ -1,16 +1,30 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>net8.0</TargetFramework>
+	<version>1.0.0</version>
+    <TargetFrameworks>net8.0;</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<AssemblyVersion>1.0.63.8780</AssemblyVersion>
-	<FileVersion>1.0.63.8780</FileVersion>
+	<AssemblyVersion>1.0.69.8780</AssemblyVersion>
+	<FileVersion>1.0.69.8780</FileVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+	  
+	<Authors>Milen Denev</Authors>
+	<Company>Denev Cloud</Company>
+	<Description>
+		A wrapper for creating unmanaged objects in .NET (8.0 or later).
+	</Description>
+	<PackageLicenseFile>LICENSE.txt</PackageLicenseFile>
+	<RepositoryUrl>https://github.com/DenevCloud/DenevCloud.Core.Unmanaged</RepositoryUrl>
+	<PackageProjectUrl>https://github.com/DenevCloud/DenevCloud.Core.Unmanaged</PackageProjectUrl>
+	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
 
-  <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
-  </ItemGroup>
+	<ItemGroup>
+		<None Include="LICENSE.txt">
+			<Pack>True</Pack>
+			<PackagePath></PackagePath>
+		</None>
+	</ItemGroup>
 
 </Project>
