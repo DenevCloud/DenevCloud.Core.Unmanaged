@@ -108,6 +108,11 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         Handle = IntPtr.Zero;
     }
 
+    public T* GetHandle()
+    {
+        return (T*)Handle;
+    }
+
     internal void AllocateUnsafe()
     {
         var _pointer = Marshal.AllocHGlobal(H_Size);
