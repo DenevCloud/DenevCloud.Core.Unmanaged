@@ -7,7 +7,9 @@ Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DenevCloud.Core.Unmanaged.T
 EndProject
 Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DenevCloud.Core.Unmanaged", "src\DenevCloud.Core.Unmanaged.csproj", "{C3F19105-A6BF-4F1F-8A53-969BBF9FD1B8}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DenevCloud.Core.Unmanaged.Benchmarks", "benchmarks\DenevCloud.Core.Unmanaged.Benchmarks\DenevCloud.Core.Unmanaged.Benchmarks.csproj", "{DAF5D737-FEFB-4D6F-BC05-B1A6069539F0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "DenevCloud.Core.Unmanaged.Benchmarks", "benchmarks\DenevCloud.Core.Unmanaged.Benchmarks\DenevCloud.Core.Unmanaged.Benchmarks.csproj", "{DAF5D737-FEFB-4D6F-BC05-B1A6069539F0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DenevCloud.Core.Unmanaged.Examples", "DenevCloud.Core.Unmanaged.Examples\DenevCloud.Core.Unmanaged.Examples.csproj", "{9BCE27A7-3812-4632-B95A-1FFD97056B09}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -27,6 +29,10 @@ Global
 		{DAF5D737-FEFB-4D6F-BC05-B1A6069539F0}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{DAF5D737-FEFB-4D6F-BC05-B1A6069539F0}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{DAF5D737-FEFB-4D6F-BC05-B1A6069539F0}.Release|Any CPU.Build.0 = Release|Any CPU
+		{9BCE27A7-3812-4632-B95A-1FFD97056B09}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{9BCE27A7-3812-4632-B95A-1FFD97056B09}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{9BCE27A7-3812-4632-B95A-1FFD97056B09}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{9BCE27A7-3812-4632-B95A-1FFD97056B09}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

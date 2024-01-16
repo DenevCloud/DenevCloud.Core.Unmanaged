@@ -1,4 +1,6 @@
 ﻿using BenchmarkDotNet.Attributes;
+using System.Drawing;
+using System.Runtime.InteropServices;
 
 namespace DenevCloud.Core.Unmanaged.Benchmarks;
 
@@ -6,7 +8,6 @@ namespace DenevCloud.Core.Unmanaged.Benchmarks;
 [DisassemblyDiagnoser]
 public unsafe class Benchmarks
 {
-    public static Person Person = Person.Create();
     public static Person Person2 = new Person() 
     {
         Age = 20,
@@ -18,7 +19,12 @@ public unsafe class Benchmarks
 
     public Benchmarks()
     {
+    }
 
+    [Benchmark]
+    public void TestAlloc()
+    {
+        
     }
 
     [Benchmark]
