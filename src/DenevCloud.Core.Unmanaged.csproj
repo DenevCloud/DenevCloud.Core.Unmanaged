@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<version>1.0.0</version>
+	<version>1.0.0-preview1</version>
     <TargetFrameworks>net8.0;</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<AssemblyVersion>1.0.69.8780</AssemblyVersion>
-	<FileVersion>1.0.69.8780</FileVersion>
+	<AssemblyVersion>1.0.79.8781</AssemblyVersion>
+	<FileVersion>1.0.79.8781</FileVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  
 	<Authors>Milen Denev</Authors>
@@ -19,6 +19,12 @@
 	<PackageProjectUrl>https://github.com/DenevCloud/DenevCloud.Core.Unmanaged</PackageProjectUrl>
 	<GeneratePackageOnBuild>false</GeneratePackageOnBuild>
   </PropertyGroup>
+
+  <ItemGroup>
+    <Compile Remove="Tests\**" />
+    <EmbeddedResource Remove="Tests\**" />
+    <None Remove="Tests\**" />
+  </ItemGroup>
 
 	<ItemGroup>
 		<None Include="LICENSE.txt">
