@@ -9,11 +9,11 @@ DenevCloud.Core.Unmanaged API allows for allocating unmanaged objects on the hea
 var unmanaged = new UnmanagedObject<MyStruct>(); // Creates default(MyStruct)
 unmanaged.Value = new MyStruct() { Age = 99 };
 ref var myStruct = ref unmanaged.RefValue;
-unmanaged. Dispose(); //never forger to dispose if it's not under 'using' scope
+unmanaged. Dispose(); //never forget to dispose if it's not under 'using' scope
 
 //Example 2
 using var unmanaged = new UnmanagedObject<MyStruct>();
-T* handle = unmanaged.GetHandle();
+MyStruct* handle = unmanaged.GetHandle();
 *handle = new MyStruct() { Age = 99 }; //The value within unmanaged also changes since it's pointer
 
 //Example 3
