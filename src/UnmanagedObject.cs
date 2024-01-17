@@ -128,8 +128,6 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if(Disposed) 
             return; 
 
-        Disposed = true;
-
         if (Settings.UseAllocationManager)
         {
             var allowDispose = AllocationManager.Dispose(Handle);
@@ -141,6 +139,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         {
             NativeMemory.Free((void*)Handle);
             Handle = IntPtr.Zero;
+            Disposed = true;
         }
     }
 
