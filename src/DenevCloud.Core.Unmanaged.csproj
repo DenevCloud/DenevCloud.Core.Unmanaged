@@ -1,12 +1,12 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-	<version>1.0.0-preview1</version>
+	<version>1.0.1-preview1</version>
     <TargetFrameworks>net8.0;</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<AssemblyVersion>1.0.81.8781</AssemblyVersion>
-	<FileVersion>1.0.81.8781</FileVersion>
+	<AssemblyVersion>1.0.112.8782</AssemblyVersion>
+	<FileVersion>1.0.112.8782</FileVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  
 	<Authors>Milen Denev</Authors>

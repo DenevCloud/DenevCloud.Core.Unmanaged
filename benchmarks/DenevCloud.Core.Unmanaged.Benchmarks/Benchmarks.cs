@@ -3,10 +3,8 @@
 namespace DenevCloud.Core.Unmanaged.Benchmarks;
 
 [MemoryDiagnoser]
-[DisassemblyDiagnoser]
 public unsafe class Benchmarks
 {
-    public static Person Person = Person.Create();
     public static Person Person2 = new Person() 
     {
         Age = 20,
@@ -16,10 +14,7 @@ public unsafe class Benchmarks
 
     public static UnmanagedObject<Person> Unmanaged = new();
 
-    public Benchmarks()
-    {
-
-    }
+    public Benchmarks() {}
 
     [Benchmark]
     public void CreateAndDisposeUnmanagedObject()

@@ -11,13 +11,14 @@ namespace DenevCloud.Core.Unmanaged;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 {
+    #region Parameters
+
     public int H_Size 
     { 
-        get { return Marshal.SizeOf<T>(); }
+        get { return Unsafe.SizeOf<T>(); }
     }
 
     public IntPtr Handle { get; private set; }
-    public bool UseNative {  get; private set; }
     public bool Disposed { get; private set; }
 
     public ref T RefValue 
@@ -47,10 +48,13 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         }
     }
 
+    #endregion
+
+    #region Constructors
+
     public UnmanagedObject()
     {
-        UseNative = false;
-        AllocateUnsafe();
+        AllocateNativeDefault();
     }
 
     public UnmanagedObject(void* pointer)
@@ -58,39 +62,65 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         Handle = new(pointer);
     }
 
-    public UnmanagedObject(nuint? size = null, bool useNative = false)
-    {
-        UseNative = useNative;
-
-        if (useNative)
-            AllocateNative(size);
-        else
-            AllocateHGlobal(size);
-    }
-
-    public UnmanagedObject(T* value, nuint? size = null, bool useNative = false)
+    public UnmanagedObject(T* value)
     {
         Handle = new IntPtr(value);
     }
+
+    #endregion
+
+    public T* GetHandle()
+    {
+        return (T*)Handle;
+    }
+
+    #region Updates
+
+    public void Update(T Value)
+    {
+        if (!Disposed)
+            Unsafe.Write((void*)Handle, Value);
+        else
+            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+    }
+
+    public void Update(T* Value)
+    {
+        if (!Disposed)
+            Unsafe.Copy((void*)Handle, ref Unsafe.AsRef<T>(Value));
+        else
+            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+    }
+
+    public void Update(ref T Value)
+    {
+        if (!Disposed)
+            Unsafe.Copy((void*)Handle, ref Value);
+        else
+            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+    }
+
+    #endregion
 
     public void Dispose()
     {
         Destroy();
     }
 
-    public void Update(T Value)
-    {
-        Unsafe.Write((void*)Handle, Value);
-    }
+    #region Alloc / Dealloc
 
-    public void Update(T* Value)
+    internal void AllocateNativeDefault()
     {
-        Unsafe.Copy((void*)Handle, ref Unsafe.AsRef<T>(Value));
-    }
+        void* _pointer;
 
-    public void Update(ref T Value)
-    {
-        Unsafe.Copy((void*)Handle, ref Value);
+        if (Settings.UseAllocationManager)
+            _pointer = (void*)AllocationManager.Allocate((nuint)H_Size);
+        else
+            _pointer = NativeMemory.Alloc((nuint)H_Size);
+
+        T* pointer = (T*)_pointer;
+        *pointer = default(T);
+        Handle = new(pointer);
     }
 
     internal void Destroy()
@@ -98,53 +128,30 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if(Disposed) 
             return; 
 
-        Disposed = true;
+        if (Settings.UseAllocationManager)
+        {
+            var allowDispose = AllocationManager.Dispose(Handle);
 
-        if(UseNative)
+            if (allowDispose)
+                Handle = IntPtr.Zero;
+        }
+        else
+        {
             NativeMemory.Free((void*)Handle);
-        else
-            Marshal.FreeHGlobal(Handle);
-
-        Handle = IntPtr.Zero;
+            Handle = IntPtr.Zero;
+            Disposed = true;
+        }
     }
 
-    public T* GetHandle()
-    {
-        return (T*)Handle;
-    }
+    #endregion
 
-    internal void AllocateUnsafe()
-    {
-        var _pointer = Marshal.AllocHGlobal(H_Size);
-        T* objectPointer = (T*)_pointer;
-        *objectPointer = default(T);
-        Handle = new(objectPointer);
-    }
-
-    internal void AllocateNative(nuint? size = null)
-    {
-        if (size is null)
-            Handle = new(NativeMemory.Alloc((nuint)H_Size));
-        else
-            Handle = new(NativeMemory.Alloc((nuint)size));
-
-        T* objectPointer = (T*)Handle;
-        *objectPointer = default(T);
-    }
-
-    internal void AllocateHGlobal(nuint? size = null)
-    {
-        if (size is null)
-            Handle = new(Marshal.AllocHGlobal(H_Size));
-        else
-            Handle = new(Marshal.AllocHGlobal((int)size));
-
-        T* objectPointer = (T*)Handle;
-        *objectPointer = default(T);
-    }
+    #region  Operators
 
     public static implicit operator T(UnmanagedObject<T> value)
     {
+        if(value.Disposed)
+            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+
         return Unsafe.Read<T>((void*)value.Handle);
     }
 
@@ -158,4 +165,6 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         var pointer = Unsafe.AsPointer<T>(ref data);
         return new UnmanagedObject<T>(pointer);
     }
+
+    #endregion
 }

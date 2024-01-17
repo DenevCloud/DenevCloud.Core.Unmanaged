@@ -5,17 +5,17 @@
     <TargetFramework>net8.0</TargetFramework>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
+    <AssemblyVersion>1.0.34.8782</AssemblyVersion>
+    <FileVersion>1.0.34.8782</FileVersion>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>1.0.40.8782</AssemblyVersion>
-    <FileVersion>1.0.40.8782</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="BenchmarkDotNet" Version="0.13.12" />
+    <PackageReference Include="Microsoft.Extensions.Primitives" Version="8.0.0" />
   </ItemGroup>
 
   <ItemGroup>
-    <ProjectReference Include="..\..\src\DenevCloud.Core.Unmanaged.csproj" />
+    <ProjectReference Include="..\src\DenevCloud.Core.Unmanaged.csproj" />
   </ItemGroup>
 
 </Project>
