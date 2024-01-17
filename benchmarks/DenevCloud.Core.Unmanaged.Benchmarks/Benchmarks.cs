@@ -1,11 +1,8 @@
 ﻿using BenchmarkDotNet.Attributes;
-using System.Drawing;
-using System.Runtime.InteropServices;
 
 namespace DenevCloud.Core.Unmanaged.Benchmarks;
 
 [MemoryDiagnoser]
-[DisassemblyDiagnoser]
 public unsafe class Benchmarks
 {
     public static Person Person2 = new Person() 
@@ -17,15 +14,7 @@ public unsafe class Benchmarks
 
     public static UnmanagedObject<Person> Unmanaged = new();
 
-    public Benchmarks()
-    {
-    }
-
-    [Benchmark]
-    public void TestAlloc()
-    {
-        
-    }
+    public Benchmarks() {}
 
     [Benchmark]
     public void CreateAndDisposeUnmanagedObject()

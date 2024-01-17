@@ -80,6 +80,28 @@ public unsafe class Default
         Assert.True(testPerson.Age == 20);
     }
 
+    [Fact]
+    public void TestAllocationManager()
+    {
+        Settings.UseAllocationManager = true;
+        Settings.MaxAllocations = 3;
+
+        var unmanaged = new UnmanagedObject<Person>();
+        var unmanaged2 = new UnmanagedObject<Person>();
+        var unmanaged3 = new UnmanagedObject<Person>();
+        var unmanaged4 = new UnmanagedObject<Person>();
+
+        unmanaged.Dispose();
+        unmanaged2.Dispose();
+        unmanaged3.Dispose();
+        unmanaged4.Dispose();
+
+        Assert.True(
+            AllocationManager.DisposedObjects.Count == 3 && 
+            AllocationManager.Blocks.Count == 3 && 
+            AllocationManager.Started == true);
+    }
+
     internal struct Person
     {
         public static Person Create()

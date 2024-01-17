@@ -6,6 +6,8 @@ public static class Program
 {
     static unsafe void Main()
     {
+        Settings.UseAllocationManager = true;
+
         //Example 1
         var unmanaged = new UnmanagedObject<Person>(); // Creates default(MyStruct)
         unmanaged.Value = new Person() { Age = 99 };
@@ -22,11 +24,11 @@ public static class Program
         var myStruct2 = new Person();
         unmanaged3.Update(&myStruct2);
 
-        AllocHeapExample();
+        AllocExample();
         AllocUnmanagedHeapExample();
     }
 
-    static void AllocHeapExample()
+    static void AllocExample()
     {
         for(long i = 0; i < 10_000_000; i++)
         {

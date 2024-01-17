@@ -11,6 +11,8 @@ namespace DenevCloud.Core.Unmanaged;
 [StructLayout(LayoutKind.Sequential)]
 public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 {
+    #region Parameters
+
     public int H_Size 
     { 
         get { return Unsafe.SizeOf<T>(); }
@@ -46,6 +48,10 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         }
     }
 
+    #endregion
+
+    #region Constructors
+
     public UnmanagedObject()
     {
         AllocateNativeDefault();
@@ -61,10 +67,14 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         Handle = new IntPtr(value);
     }
 
-    public void Dispose()
+    #endregion
+
+    public T* GetHandle()
     {
-        Destroy();
+        return (T*)Handle;
     }
+
+    #region Updates
 
     public void Update(T Value)
     {
@@ -90,6 +100,29 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
             throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
     }
 
+    #endregion
+
+    public void Dispose()
+    {
+        Destroy();
+    }
+
+    #region Alloc / Dealloc
+
+    internal void AllocateNativeDefault()
+    {
+        void* _pointer;
+
+        if (Settings.UseAllocationManager)
+            _pointer = (void*)AllocationManager.Allocate((nuint)H_Size);
+        else
+            _pointer = NativeMemory.Alloc((nuint)H_Size);
+
+        T* pointer = (T*)_pointer;
+        *pointer = default(T);
+        Handle = new(pointer);
+    }
+
     internal void Destroy()
     {
         if(Disposed) 
@@ -97,23 +130,23 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
         Disposed = true;
 
-        NativeMemory.AlignedFree((void*)Handle);
-       
-        Handle = IntPtr.Zero;
+        if (Settings.UseAllocationManager)
+        {
+            var allowDispose = AllocationManager.Dispose(Handle);
+
+            if (allowDispose)
+                Handle = IntPtr.Zero;
+        }
+        else
+        {
+            NativeMemory.Free((void*)Handle);
+            Handle = IntPtr.Zero;
+        }
     }
 
-    public T* GetHandle()
-    {
-        return (T*)Handle;
-    }
+    #endregion
 
-    internal void AllocateNativeDefault()
-    {
-        var _pointer = NativeMemory.Alloc((nuint)H_Size);
-        T* pointer = (T*)_pointer;
-        *pointer = default(T);
-        Handle = new(pointer);
-    }
+    #region  Operators
 
     public static implicit operator T(UnmanagedObject<T> value)
     {
@@ -133,4 +166,6 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         var pointer = Unsafe.AsPointer<T>(ref data);
         return new UnmanagedObject<T>(pointer);
     }
+
+    #endregion
 }
