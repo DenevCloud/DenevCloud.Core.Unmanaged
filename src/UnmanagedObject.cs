@@ -18,7 +18,8 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         get { return Unsafe.SizeOf<T>(); }
     }
 
-    public IntPtr Handle { get; private set; }
+    private IntPtr Handle { get; set; }
+
     public bool Disposed { get; private set; }
 
     public ref T RefValue 
@@ -55,16 +56,27 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
     #region Constructors
 
+    /// <summary>
+    /// Create an UnmanagedObject<T> with default(T) value.
+    /// </summary>
     public UnmanagedObject()
     {
         AllocateNativeDefault();
     }
 
+    /// <summary>
+    /// Create an UnmanagedObject<T> from a pointer. It must be from unmanaged object.
+    /// </summary>
+    /// <param name="pointer">A pointer to the object of an unknown type.</param>
     public UnmanagedObject(void* pointer)
     {
         Handle = new(pointer);
     }
 
+    /// <summary>
+    /// Create an UnmanagedObject<T> from a pointer. It must be from unmanaged object.
+    /// </summary>
+    /// <param name="value">A pointer to the object of a T type.</param>
     public UnmanagedObject(T* value)
     {
         Handle = new IntPtr(value);
@@ -72,11 +84,13 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
     #endregion
 
+    /// <summary>
+    /// Returns a pointer of a T type, which points to the underlying object.
+    /// </summary>
+    /// <returns>Returns a pointer of a T type, which points to the underlying object.</returns>
+    /// <exception cref="ObjectDisposedException">If the UnmanagedObject<T> is disposed then it throws an exception.</exception>
     public T* GetHandle()
     {
-        if (Disposed)
-            throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and the value is no longer available");
-
         return (T*)Handle;
     }
 
@@ -108,11 +122,6 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
     #endregion
 
-    public void Dispose()
-    {
-        Destroy();
-    }
-
     #region Alloc / Dealloc
 
     internal void AllocateNativeDefault()
@@ -129,10 +138,13 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         Handle = new(pointer);
     }
 
-    internal void Destroy()
+    /// <summary>
+    /// Frees the memory block if Settings.UseAllocationManager is false otherwise, clears the memory block for reuse.
+    /// </summary>
+    public void Dispose()
     {
-        if(Disposed) 
-            return; 
+        if (Disposed)
+            return;
 
         if (Settings.UseAllocationManager)
         {
@@ -147,6 +159,8 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
             Handle = IntPtr.Zero;
             Disposed = true;
         }
+
+        GC.SuppressFinalize(this);
     }
 
     #endregion
@@ -158,7 +172,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if(value.Disposed)
             throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
 
-        return Unsafe.Read<T>((void*)value.Handle);
+        return Unsafe.Read<T>(value.GetHandle());
     }
 
     public static implicit operator UnmanagedObject<T>(T* data)
