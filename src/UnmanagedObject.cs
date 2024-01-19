@@ -26,7 +26,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         get 
         {
             if (Disposed)
-                throw new ObjectDisposedException("UnmanagedObject<T> is disposed and the value is no longer available");
+                throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and the value is no longer available");
 
             return ref Unsafe.AsRef<T>((void*)Handle); 
         } 
@@ -37,13 +37,16 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         get
         {
             if (Disposed)
-                throw new ObjectDisposedException("UnmanagedObject<T> is disposed and the value is no longer available");
+                throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and the value is no longer available");
 
             return Unsafe.AsRef<T>((void*)Handle);
         }
 
         set
         {
+            if (Disposed)
+                throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and the value is no longer available");
+
             Unsafe.Write((void*)Handle, value);
         }
     }
@@ -71,6 +74,9 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
     public T* GetHandle()
     {
+        if (Disposed)
+            throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and the value is no longer available");
+
         return (T*)Handle;
     }
 
@@ -81,7 +87,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if (!Disposed)
             Unsafe.Write((void*)Handle, Value);
         else
-            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+            throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and cannot be updated.");
     }
 
     public void Update(T* Value)
@@ -89,7 +95,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if (!Disposed)
             Unsafe.Copy((void*)Handle, ref Unsafe.AsRef<T>(Value));
         else
-            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+            throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and cannot be updated.");
     }
 
     public void Update(ref T Value)
@@ -97,7 +103,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
         if (!Disposed)
             Unsafe.Copy((void*)Handle, ref Value);
         else
-            throw new ObjectDisposedException($"UnmanagedObject<T{nameof(T)}> is disposed and cannot be updated.");
+            throw new ObjectDisposedException($"UnmanagedObject<{nameof(T)}> is disposed and cannot be updated.");
     }
 
     #endregion
