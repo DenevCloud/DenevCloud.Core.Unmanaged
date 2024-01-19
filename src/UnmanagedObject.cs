@@ -22,7 +22,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
     public bool Disposed { get; private set; }
 
-    public ref T RefValue 
+    public ref T RefValueUnsafe
     { 
         get 
         {

@@ -18,7 +18,7 @@ public unsafe partial class UnmanagedObjectTest
         Settings.UseAllocationManager = false;
         var unmanaged = new UnmanagedObject<Person>();
 
-        ref var test = ref unmanaged.RefValue;
+        ref var test = ref unmanaged.RefValueUnsafe;
 
         Assert.True(test.Age == 0);
     }
@@ -28,7 +28,7 @@ public unsafe partial class UnmanagedObjectTest
     {
         Settings.UseAllocationManager = false;
         var unmanaged = new UnmanagedObject<Person>();
-        ref var test = ref unmanaged.RefValue;
+        ref var test = ref unmanaged.RefValueUnsafe;
         unmanaged.Dispose();
         Assert.True(unmanaged.Disposed == true && new IntPtr(unmanaged.GetHandle()) == IntPtr.Zero);
     }
@@ -92,7 +92,7 @@ public unsafe partial class UnmanagedObjectTest
     {
         Settings.UseAllocationManager = true;
         var unmanaged = new UnmanagedObject<Person>();
-        ref var test = ref unmanaged.RefValue;
+        ref var test = ref unmanaged.RefValueUnsafe;
         Assert.True(test.Age == 0);
     }
 

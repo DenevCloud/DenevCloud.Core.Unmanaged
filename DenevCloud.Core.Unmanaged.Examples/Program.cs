@@ -11,7 +11,7 @@ public static class Program
         //Object Example 1
         var unmanaged = new UnmanagedObject<Person>(); // Creates default(MyStruct)
         unmanaged.Value = new Person() { Age = 99 };
-        ref var myStruct = ref unmanaged.RefValue;
+        var myStruct = unmanaged.Value;
         unmanaged.Dispose(); //never forger to dispose if it's not under 'using' scope
 
         Console.WriteLine(myStruct.Age);
