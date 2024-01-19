@@ -86,7 +86,7 @@ public static class AllocationManager
         return _pointer;
     }
 
-    public unsafe static bool Dispose(IntPtr pointer)
+    public unsafe static bool Dispose(IntPtr pointer, nuint size)
     {
         if(Blocks.Count > Settings.MaxAllocations)
         {
@@ -106,15 +106,9 @@ public static class AllocationManager
         }
         else
         {
+            NativeMemory.Clear((void*)pointer, size);
             DisposedObjects.Add(pointer);
             return false;
         }
     }
-}
-
-public struct AllocatedMemoryBlock
-{
-    internal DateTime Expires { get; set; }
-    internal IntPtr Id { get; set; }
-    internal nuint Size { get; set; }
 }

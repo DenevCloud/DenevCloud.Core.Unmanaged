@@ -1,24 +1,9 @@
-using Microsoft.Extensions.Primitives;
-
 namespace DenevCloud.Core.Unmanaged.Tests;
 
 #pragma warning disable CS8500
 
-public unsafe class Default
+public unsafe partial class UnmanagedObjectTest
 {
-    [Fact]
-    public void InitAndReadWithPointer()
-    {
-        Settings.UseAllocationManager = false;
-        Person person = Person.Create();
-        var _pointer = &person;
-        var unmanaged = new UnmanagedObject<Person>(_pointer);
-
-        Person testPerson = unmanaged;
-
-        Assert.True(testPerson.Age == person.Age);
-    }
-
     [Fact]
     public void InitAndReadEmpty()
     {
@@ -45,7 +30,7 @@ public unsafe class Default
         var unmanaged = new UnmanagedObject<Person>();
         ref var test = ref unmanaged.RefValue;
         unmanaged.Dispose();
-        Assert.True(unmanaged.Disposed == true && unmanaged.Handle == IntPtr.Zero);
+        Assert.True(unmanaged.Disposed == true && new IntPtr(unmanaged.GetHandle()) == IntPtr.Zero);
     }
 
     [Fact]
@@ -162,22 +147,5 @@ public unsafe class Default
             AllocationManager.DisposedObjects.Count == 3 &&
             AllocationManager.Blocks.Count == 3 &&
             AllocationManager.Started == true);
-    }
-
-    internal struct Person
-    {
-        public static Person Create()
-        {
-            return new Person
-            {
-                Id = Guid.Empty,
-                Name = new StringValues("Mylo"),
-                Age = 20
-            };
-        }
-
-        internal Guid Id { get; set; }
-        internal StringValues Name { get; set; }
-        internal byte Age { get; set; }
     }
 }
