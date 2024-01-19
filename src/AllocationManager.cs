@@ -10,7 +10,6 @@ public static class AllocationManager
 {
     public static List<IntPtr> DisposedObjects { get; private set; } = new List<IntPtr>();
     public static ConcurrentStack<AllocatedMemoryBlock> Blocks { get; private set; } = new ConcurrentStack<AllocatedMemoryBlock>();
-
     public static bool Started { get; private set; } = false;
 
     internal static Action CreateCheckExpiredAction = new Action(async () =>
@@ -27,7 +26,7 @@ public static class AllocationManager
 
     internal static Task CheckExpired = Task.Factory.StartNew(CreateCheckExpiredAction);
 
-    public unsafe static void CleanExpired()
+    internal unsafe static void CleanExpired()
     {
         Repeat:
 
@@ -54,7 +53,7 @@ public static class AllocationManager
         }
     }
 
-    public unsafe static IntPtr Allocate(nuint Size)
+    internal unsafe static IntPtr Allocate(nuint Size)
     {
         if (Settings.UseAllocationManager && !Started)
             CheckExpired = Task.Factory.StartNew(CreateCheckExpiredAction);
@@ -86,7 +85,7 @@ public static class AllocationManager
         return _pointer;
     }
 
-    public unsafe static bool Dispose(IntPtr pointer, nuint size)
+    internal unsafe static bool Dispose(IntPtr pointer, nuint size)
     {
         if(Blocks.Count > Settings.MaxAllocations)
         {

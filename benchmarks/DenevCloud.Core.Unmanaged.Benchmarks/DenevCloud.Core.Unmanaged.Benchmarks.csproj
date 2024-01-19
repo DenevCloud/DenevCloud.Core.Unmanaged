@@ -6,8 +6,8 @@
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>1.0.42.8784</AssemblyVersion>
-    <FileVersion>1.0.42.8784</FileVersion>
+    <AssemblyVersion>1.0.43.8784</AssemblyVersion>
+    <FileVersion>1.0.43.8784</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>
