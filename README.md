@@ -5,24 +5,41 @@ DenevCloud.Core.Unmanaged API allows for allocating unmanaged objects on the hea
 # Examples
 
 ```csharp
-//Example 1
-var unmanaged = new UnmanagedObject<MyStruct>(); // Creates default(MyStruct)
-unmanaged.Value = new MyStruct() { Age = 99 };
+//Object Example 1
+var unmanaged = new UnmanagedObject<Person>(); // Creates default(MyStruct)
+unmanaged.Value = new Person() { Age = 99 };
 ref var myStruct = ref unmanaged.RefValue;
-unmanaged. Dispose(); //never forget to dispose if it's not under 'using' scope
+unmanaged.Dispose(); //never forger to dispose if it's not under 'using' scope
 
-//Example 2
-using var unmanaged = new UnmanagedObject<MyStruct>();
-MyStruct* handle = unmanaged.GetHandle();
-*handle = new MyStruct() { Age = 99 }; //The value within unmanaged also changes since it's pointer
+Console.WriteLine(myStruct.Age);
 
-//Example 3
-using var unmanaged = new UnmanagedObject<MyStruct>();
-var myStruct2 = new MyStruct();
-unmanaged.Update(&myStruct2);
+//Object Example 2
+using var unmanaged2 = new UnmanagedObject<Person>();
+Person* handle = unmanaged2.GetHandle();
+*handle = new Person() { Age = 99 }; //The value within unmanaged also changes since it's pointer
+
+//Object Example 3
+using var unmanaged3 = new UnmanagedObject<Person>();
+var myStruct2 = new Person();
+unmanaged3.Update(&myStruct2);
+
+//Array Example 1
+var unamanagedArray1 = new UnmanagedArray<Person>(5);
+unamanagedArray1[4] = new Person()
+{
+    Age = 103,
+    Id = Guid.NewGuid(),
+    Name = "Mylo 5"
+};
+Person[] persons = unamanagedArray1.Array;
+Console.WriteLine(persons[4].Age);
+unamanagedArray1.Dispose();
 ```
 
-# Since Version 1.0.1
+# Version 1.0.2
+Added `UnmanagedArray<T>` which works on similar principle but it's optimized for arrays and allocates a whole memory block for the whole array. Currently not supporting resizing.
+
+# Version 1.0.1
 New feature has been added called `AllocationManager` which allows to reuse the blocks of memory that are allocated. This greatly improves performance since no new memory blocks allocations are made.
 
 ## Settings
