@@ -6,13 +6,15 @@ public static class Program
 {
     static unsafe void Main()
     {
-        Settings.UseAllocationManager = true;
+        Settings.UseAllocationManager = false;
 
         //Example 1
         var unmanaged = new UnmanagedObject<Person>(); // Creates default(MyStruct)
         unmanaged.Value = new Person() { Age = 99 };
         ref var myStruct = ref unmanaged.RefValue;
         unmanaged.Dispose(); //never forger to dispose if it's not under 'using' scope
+
+        Console.WriteLine(myStruct.Age);
 
         //Example 2
         using var unmanaged2 = new UnmanagedObject<Person>();

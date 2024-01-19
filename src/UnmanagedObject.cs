@@ -130,7 +130,7 @@ public unsafe struct UnmanagedObject<T> : IDisposable where T : struct
 
         if (Settings.UseAllocationManager)
         {
-            var allowDispose = AllocationManager.Dispose(Handle);
+            var allowDispose = AllocationManager.Dispose(Handle, (nuint)H_Size);
 
             if (allowDispose)
                 Handle = IntPtr.Zero;
