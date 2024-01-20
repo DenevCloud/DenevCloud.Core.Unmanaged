@@ -20,6 +20,6 @@ public unsafe partial class UnmanagedObjectTest
 
         internal Guid Id { get; set; }
         internal StringValues Name { get; set; }
-        internal byte Age { get; set; }
+        internal byte Age;
     }
 }

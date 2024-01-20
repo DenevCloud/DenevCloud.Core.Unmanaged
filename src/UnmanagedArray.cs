@@ -1,10 +1,11 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.Extensions.Primitives;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
 namespace DenevCloud.Core.Unmanaged;
 
 #pragma warning disable CS8500 // This takes the address of, gets the size of, or declares a pointer to a managed type
-#pragma warning disable CS0693 // Type parameter has the same name as the type parameter from outer type
+#nullable disable
 
 [Serializable]
 [StructLayout(LayoutKind.Sequential)]
@@ -12,22 +13,22 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
 {
     #region Parameters
 
-    public int H_Size
+    public long H_Size
     {
         get { return Unsafe.SizeOf<T>(); }
     }
 
-    public int TotalH_Size
+    public long TotalH_Size
     {
-        get { return _array_size * Unsafe.SizeOf<T>(); }
+        get { return _length * Unsafe.SizeOf<T>(); }
     }
 
-    private int _array_size;
+    private long _length;
 
-    public int Array_Size
+    public long Length
     {
-        get { return _array_size; }
-        internal set { _array_size = value; }
+        get { return _length; }
+        internal set { _length = value; }
     }
 
     private IntPtr Handle { get; set; }
@@ -41,7 +42,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
             if (Disposed)
                 throw new ObjectDisposedException($"UnmanagedArray<{nameof(T)}> is disposed and the value is no longer available");
 
-            if (index > Array_Size)
+            if (index > Length)
                 throw new IndexOutOfRangeException();
 
             return Unsafe.AsRef<T>((void*)(Handle + index * H_Size));
@@ -52,7 +53,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
             if (Disposed)
                 throw new ObjectDisposedException($"UnmanagedArray<{nameof(T)}> is disposed and the value is no longer available");
 
-            if (index > Array_Size)
+            if (index > Length)
                 throw new IndexOutOfRangeException();
 
             Unsafe.Write((void*)(Handle + index * H_Size), value);
@@ -66,9 +67,9 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
             if (Disposed)
                 throw new ObjectDisposedException($"UnmanagedArray<{nameof(T)}> is disposed and the value is no longer available");
 
-            var _array = new T[Array_Size];
+            var _array = new T[Length];
 
-            for (int i = 0; i < Array_Size; i++)
+            for (int i = 0; i < Length; i++)
             {
                 _array[i] = Unsafe.AsRef<T>((void*)(Handle + i * H_Size));
             }
@@ -89,6 +90,11 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
         return (T*)Handle;
     }
 
+    public void SortBy<TType>(ref StringValues fieldName) where TType : unmanaged
+    {
+        BubbleSort<TType>(ref fieldName);
+    }
+
     #region Constructors
 
     /// <summary>
@@ -96,7 +102,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
     /// </summary>
     public UnmanagedArray()
     {
-        Array_Size = 1;
+        Length = 1;
         AllocateNativeDefault();
     }
 
@@ -105,7 +111,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
     /// </summary>
     public UnmanagedArray(int size)
     {
-        Array_Size = size;
+        Length = size;
         AllocateNativeDefault();
     }
 
@@ -119,10 +125,10 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
 
         Handle = new(_pointer);
 
-        for (int i = 0; i < TotalH_Size; i = i + H_Size)
+        for (long i = 0; i < TotalH_Size; i = i + H_Size)
         {
             var loc = (void*)(Handle + i);
-            Unsafe.Write(loc, default(T)); 
+            Unsafe.Write(loc, default(T));
         }
     }
 
@@ -134,8 +140,6 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
         NativeMemory.Free((void*)Handle);
         Handle = IntPtr.Zero;
         Disposed = true;
-
-        GC.SuppressFinalize(this);
     }
 
     #endregion
@@ -147,9 +151,9 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
         if (value.Disposed)
             throw new ObjectDisposedException($"UnmanagedArray<T{nameof(T)}> is disposed and cannot be updated.");
 
-        var _array = new T[value.Array_Size];
+        var _array = new T[value.Length];
 
-        for (int i = 0; i < value.Array_Size; i++)
+        for (int i = 0; i < value.Length; i++)
         {
             _array[i] = Unsafe.AsRef<T>((value.GetHandle() + i * value.H_Size));
         }
@@ -170,4 +174,31 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
     }
 
     #endregion
+
+    private void BubbleSort<TType>(ref StringValues fieldName) where TType : unmanaged
+    {
+        for (int i = 0; i < _length - 1; i++)
+        {
+            bool swapped = false;
+            for (int j = 0; j < _length - i - 1; j++)
+            {
+                var value1 = (TType)typeof(T).GetProperty(fieldName).GetValue(this[j]);
+                var value2 = (TType)typeof(T).GetProperty(fieldName).GetValue(this[j + 1]);
+
+                int result = Comparer<TType>.Default.Compare(value1, value2);
+
+                if (result > 0)
+                {
+                    var _temp = this[j + 1];
+                    this[j + 1] = this[j];
+                    this[j] = _temp;
+                    swapped = true;
+                }
+            }
+            if (!swapped)
+            {
+                break;
+            }
+        }
+    }
 }

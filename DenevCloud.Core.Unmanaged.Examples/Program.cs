@@ -1,4 +1,5 @@
-﻿using System.Runtime.CompilerServices;
+﻿using Microsoft.Extensions.Primitives;
+using System.Runtime.CompilerServices;
 
 namespace DenevCloud.Core.Unmanaged.Examples;
 
@@ -34,8 +35,60 @@ public static class Program
             Id = Guid.NewGuid(),
             Name = "Mylo 5"
         };
+        unamanagedArray1[3] = new Person()
+        {
+            Age = 103,
+            Id = Guid.NewGuid(),
+            Name = "Mylo 5"
+        };
+
         Person[] persons = unamanagedArray1.Array;
         Console.WriteLine(persons[4].Age);
         unamanagedArray1.Dispose();
+
+        var unmanagedArray = new UnmanagedArray<Person>(5);
+
+        unmanagedArray[3] = new Person()
+        {          
+            Id = Guid.NewGuid(),
+            Name = "Mylo 1",
+            Age = 99,
+        };
+
+        unmanagedArray[1] = new Person()
+        {            
+            Id = Guid.NewGuid(),
+            Name = "Mylo 2",
+            Age = 100,
+        };
+
+        unmanagedArray[0] = new Person()
+        {           
+            Id = Guid.NewGuid(),
+            Name = "Mylo 3",
+            Age = 101,
+        };
+
+        unmanagedArray[4] = new Person()
+        {           
+            Id = Guid.NewGuid(),
+            Name = "Mylo 4",
+            Age = 102,
+        };
+
+        unmanagedArray[2] = new Person()
+        {            
+            Id = Guid.NewGuid(),
+            Name = "Mylo 5",
+            Age = 103,
+        };
+
+        var fieldName = new StringValues("Age");
+
+        unmanagedArray.SortBy<byte>(ref fieldName);
+
+        Person[] person = unmanagedArray.Array;
+
+        Console.ReadKey();
     }
 }

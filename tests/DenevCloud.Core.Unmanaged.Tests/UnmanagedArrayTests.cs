@@ -1,4 +1,5 @@
-﻿using static DenevCloud.Core.Unmanaged.Tests.UnmanagedObjectTest;
+﻿using Microsoft.Extensions.Primitives;
+using static DenevCloud.Core.Unmanaged.Tests.UnmanagedObjectTest;
 
 namespace DenevCloud.Core.Unmanaged.Tests;
 
@@ -70,6 +71,60 @@ public unsafe class UnmanagedArrayTests
 
         Assert.True(
             person[0].Age == 99);
+    }
+
+    [Fact]
+    public void InitArrayOf5AndSortBy()
+    {
+        var unmanagedArray = new UnmanagedArray<Person>(5);
+
+        unmanagedArray[3] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 1",
+            Age = 99,
+        };
+
+        unmanagedArray[1] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 2",
+            Age = 100,
+        };
+
+        unmanagedArray[0] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 3",
+            Age = 101,
+        };
+
+        unmanagedArray[4] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 4",
+            Age = 102,
+        };
+
+        unmanagedArray[2] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 5",
+            Age = 103,
+        };
+
+        var fieldName = new StringValues("Age");
+
+        unmanagedArray.SortBy<byte>(ref fieldName);
+
+        Person[] person = unmanagedArray.Array;
+
+        Assert.True(
+           person[0].Age == 99 &&
+           person[1].Age == 100 &&
+           person[2].Age == 101 &&
+           person[3].Age == 102 &&
+           person[4].Age == 103);
     }
 
     [Fact]
