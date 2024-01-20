@@ -3,6 +3,8 @@ using static DenevCloud.Core.Unmanaged.Tests.UnmanagedObjectTest;
 
 namespace DenevCloud.Core.Unmanaged.Tests;
 
+#nullable enable
+
 public unsafe class UnmanagedArrayTests
 {
     [Fact]
@@ -119,12 +121,13 @@ public unsafe class UnmanagedArrayTests
 
         Person[] person = unmanagedArray.Array;
 
-        Assert.True(
-           person[0].Age == 99 &&
+        var isPassed = person[0].Age == 99 &&
            person[1].Age == 100 &&
            person[2].Age == 101 &&
            person[3].Age == 102 &&
-           person[4].Age == 103);
+           person[4].Age == 103;
+
+        Assert.True(isPassed);
     }
 
     [Fact]
@@ -133,5 +136,73 @@ public unsafe class UnmanagedArrayTests
         var unmanaged = new UnmanagedArray<Person>();
         unmanaged.Dispose();
         Assert.True(unmanaged.Disposed == true && new IntPtr(unmanaged.GetHandle()) == IntPtr.Zero);
+    }
+
+    [Fact]
+    public void Resize()
+    {
+        var unmanagedArray = new UnmanagedArray<Person>(5);
+
+        unmanagedArray.Resize(6);
+
+        unmanagedArray[5] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 6",
+            Age = 200,
+        };
+
+        var person = unmanagedArray.Array;
+
+        var result = person[5].Age == 200 && person[5].Name == "Mylo 6";
+
+        Assert.True(result);
+    }
+
+    [Fact]
+    public void Shrink()
+    {
+        var unmanagedArray = new UnmanagedArray<Person>(5);
+
+        unmanagedArray[3] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 1",
+            Age = 99,
+        };
+
+        unmanagedArray[1] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 2",
+            Age = 100,
+        };
+
+        unmanagedArray[0] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 3",
+            Age = 101,
+        };
+
+        unmanagedArray[4] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 4",
+            Age = 102,
+        };
+
+        unmanagedArray[2] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 5",
+            Age = 103,
+        };
+
+        unmanagedArray.Shrink(4);
+
+        Person[] person = unmanagedArray.Array;
+
+        Assert.True(person.Length == 4 && person[3].Age == 99);
     }
 }

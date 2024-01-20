@@ -87,6 +87,21 @@ public static class Program
         unmanagedArray.SortBy<byte>(ref fieldName);
         Person[] person = unmanagedArray.Array;
 
+        unmanagedArray.Resize(6);
+
+        unmanagedArray[5] = new Person()
+        {
+            Id = Guid.NewGuid(),
+            Name = "Mylo 4",
+            Age = 102,
+        };
+
+        Person[] person2 = unmanagedArray.Array;
+
+        unmanagedArray.Shrink(5);
+
+        Person[] person3 = unmanagedArray.Array;
+
         Console.ReadKey();
     }
 }

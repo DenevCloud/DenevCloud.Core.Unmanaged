@@ -8,8 +8,8 @@
     <IsPackable>false</IsPackable>
     <IsTestProject>true</IsTestProject>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
-    <AssemblyVersion>1.0.35.8785</AssemblyVersion>
-    <FileVersion>1.0.35.8785</FileVersion>
+    <AssemblyVersion>1.0.44.8785</AssemblyVersion>
+    <FileVersion>1.0.44.8785</FileVersion>
   </PropertyGroup>
 
   <ItemGroup>

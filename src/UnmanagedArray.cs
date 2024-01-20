@@ -20,7 +20,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
 
     public long TotalH_Size
     {
-        get { return _length * Unsafe.SizeOf<T>(); }
+        get { return _length * H_Size; }
     }
 
     private long _length;
@@ -93,6 +93,42 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
     public void SortBy<TType>(ref StringValues fieldName) where TType : unmanaged
     {
         BubbleSort<TType>(ref fieldName);
+    }
+
+    public void Resize(long newLength)
+    {
+        if (newLength <= _length)
+            throw new InvalidOperationException("This method can be used only to enlarge the memory block that is occupied by the array of T.");
+
+        Length = newLength;
+
+        NativeMemory.Realloc((void*)Handle, (nuint)TotalH_Size);
+    }
+
+    public void Shrink(long newLength)
+    {
+        if (newLength >= _length)
+            throw new InvalidOperationException("This method can be used only to shrink the memory block that is occupied by the array of T.");
+
+        var oldPointer = Handle;
+
+        var valuesToClear = (Length - newLength);
+        var valuesToKeep = Length - valuesToClear;
+
+        var newSize = (nuint)valuesToKeep * (nuint)H_Size;
+
+        var newVoidPointer = NativeMemory.Alloc(newSize);
+        var newPointer = new IntPtr(newVoidPointer);
+
+        for (int i = 0; i < newLength; i++)
+        {
+            ref T val = ref Unsafe.AsRef<T>((void*)(oldPointer + i * H_Size));
+            Unsafe.Copy((void*)(newPointer + i * H_Size), ref val);
+        }
+
+        Handle = newPointer;
+        Length = newLength;
+        NativeMemory.Free((void*)oldPointer);
     }
 
     #region Constructors
