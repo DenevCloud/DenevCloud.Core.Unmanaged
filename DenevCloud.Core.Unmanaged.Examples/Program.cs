@@ -84,9 +84,7 @@ public static class Program
         };
 
         var fieldName = new StringValues("Age");
-
         unmanagedArray.SortBy<byte>(ref fieldName);
-
         Person[] person = unmanagedArray.Array;
 
         Console.ReadKey();
