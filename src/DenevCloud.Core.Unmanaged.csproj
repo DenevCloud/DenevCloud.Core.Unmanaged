@@ -5,8 +5,8 @@
     <TargetFrameworks>net8.0;</TargetFrameworks>
     <ImplicitUsings>enable</ImplicitUsings>
     <Nullable>enable</Nullable>
-	<AssemblyVersion>1.0.191.8785</AssemblyVersion>
-	<FileVersion>1.0.191.8785</FileVersion>
+	<AssemblyVersion>1.0.199.8789</AssemblyVersion>
+	<FileVersion>1.0.199.8789</FileVersion>
 	<AllowUnsafeBlocks>true</AllowUnsafeBlocks>
 	  
 	<Authors>Milen Denev</Authors>

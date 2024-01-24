@@ -1,5 +1,6 @@
 ﻿using Microsoft.Extensions.Primitives;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 
 namespace DenevCloud.Core.Unmanaged.Examples;
 
@@ -14,8 +15,6 @@ public static class Program
         unmanaged.Value = new Person() { Age = 99 };
         var myStruct = unmanaged.Value;
         unmanaged.Dispose(); //never forger to dispose if it's not under 'using' scope
-
-        Console.WriteLine(myStruct.Age);
 
         //Object Example 2
         using var unmanaged2 = new UnmanagedObject<Person>();
@@ -97,10 +96,6 @@ public static class Program
         };
 
         Person[] person2 = unmanagedArray.Array;
-
-        unmanagedArray.Shrink(5);
-
-        Person[] person3 = unmanagedArray.Array;
 
         Console.ReadKey();
     }

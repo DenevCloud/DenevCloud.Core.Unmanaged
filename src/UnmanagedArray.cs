@@ -102,33 +102,7 @@ public unsafe struct UnmanagedArray<T> : IDisposable where T : struct
 
         Length = newLength;
 
-        NativeMemory.Realloc((void*)Handle, (nuint)TotalH_Size);
-    }
-
-    public void Shrink(long newLength)
-    {
-        if (newLength >= _length)
-            throw new InvalidOperationException("This method can be used only to shrink the memory block that is occupied by the array of T.");
-
-        var oldPointer = Handle;
-
-        var valuesToClear = (Length - newLength);
-        var valuesToKeep = Length - valuesToClear;
-
-        var newSize = (nuint)valuesToKeep * (nuint)H_Size;
-
-        var newVoidPointer = NativeMemory.Alloc(newSize);
-        var newPointer = new IntPtr(newVoidPointer);
-
-        for (int i = 0; i < newLength; i++)
-        {
-            ref T val = ref Unsafe.AsRef<T>((void*)(oldPointer + i * H_Size));
-            Unsafe.Copy((void*)(newPointer + i * H_Size), ref val);
-        }
-
-        Handle = newPointer;
-        Length = newLength;
-        NativeMemory.Free((void*)oldPointer);
+        Handle = new IntPtr(NativeMemory.Realloc((void*)Handle, (nuint)TotalH_Size));
     }
 
     #region Constructors
